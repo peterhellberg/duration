@@ -32,6 +32,15 @@ func main() {
 }
 ```
 
+## Configuration
+
+```
+HoursPerDay = 24.0
+HoursPerWeek = 168.0
+HoursPerMonth = 730.4841667
+HoursPerYear = 8765.81
+```
+
 ## Grammar for durations
 
 ```

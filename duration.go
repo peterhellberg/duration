@@ -31,21 +31,32 @@ package duration
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"time"
 )
 
 var (
+	// HoursPerDay is the number of hours per day according to Google
+	HoursPerDay = 24.0
+
+	// HoursPerWeek is the number of hours per week according to Google
+	HoursPerWeek = 168.0
+
+	// HoursPerMonth is the number of hours per month according to Google
+	HoursPerMonth = 730.4841667
+
+	// HoursPerYear is the number of hours per year according to Google
+	HoursPerYear = 8765.81
+
 	// ErrUnsupportedFormat is returned when parsing fails
 	ErrUnsupportedFormat = errors.New("unsupported string format")
 
-	pattern = regexp.MustCompile(`\AP((?P<days>\d+)D)?(T((?P<hours>\d+)H)?((?P<minutes>\d+)M)?((?P<seconds>[\d\.]+?)S)?)?\z`)
+	pattern = regexp.MustCompile(`\AP((?P<years>[\d\.]+)Y)?((?P<months>[\d\.]+)M)?((?P<weeks>[\d\.]+)W)?((?P<days>[\d\.]+)D)?(T((?P<hours>[\d\.]+)H)?((?P<minutes>[\d\.]+)M)?((?P<seconds>[\d\.]+?)S)?)?\z`)
 )
 
 // Parse a RFC3339 duration string into time.Duration
-//
-// Not supported for now: Years, Months and Weeks
 func Parse(s string) (time.Duration, error) {
 	d := time.Duration(0)
 
@@ -69,14 +80,34 @@ func Parse(s string) (time.Duration, error) {
 		f, _ := strconv.ParseFloat(value, 64)
 
 		switch name {
+		case "years":
+			if years, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerYear)); err == nil {
+				d += years
+			}
+		case "months":
+			if months, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerMonth)); err == nil {
+				d += months
+			}
+		case "weeks":
+			if weeks, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerWeek)); err == nil {
+				d += weeks
+			}
 		case "days":
-			d += time.Duration(f) * time.Hour * 24
+			if days, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerDay)); err == nil {
+				d += days
+			}
 		case "hours":
-			d += time.Duration(f) * time.Hour
+			if hours, err := time.ParseDuration(fmt.Sprintf("%fh", f)); err == nil {
+				d += hours
+			}
 		case "minutes":
-			d += time.Duration(f) * time.Minute
+			if minutes, err := time.ParseDuration(fmt.Sprintf("%fm", f)); err == nil {
+				d += minutes
+			}
 		case "seconds":
-			d += time.Duration(f) * time.Second
+			if seconds, err := time.ParseDuration(fmt.Sprintf("%fs", f)); err == nil {
+				d += seconds
+			}
 		}
 	}
 

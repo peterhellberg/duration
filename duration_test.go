@@ -3,6 +3,7 @@ package duration_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/peterhellberg/duration"
 )
@@ -13,6 +14,9 @@ func TestParse(t *testing.T) {
 		err error
 		out float64
 	}{
+		{"PT1.5M", nil, 90},
+		{"PT0.5H", nil, 1800},
+		{"PT0.5H29M60S", nil, 3600}, // Shouldn’t be valid since only the last value can have fractions
 		{"PT15S", nil, 15},
 		{"PT1M", nil, 60},
 		{"PT3M", nil, 180},
@@ -23,8 +27,13 @@ func TestParse(t *testing.T) {
 		{"PT1H30M5S", nil, 5405},
 		{"P2DT1H10S", nil, 176410},
 		{"PT1004199059S", nil, 1004199059},
-		{"P3DT5H20M30.123S", nil, 278430},
-		{"P2YT1H30M5S", duration.ErrUnsupportedFormat, 0},
+		{"P3DT5H20M30.123S", nil, 278430.123},
+		{"P1W", nil, 604800}, // Shouldn’t be valid since string is missing T
+		{"P0.123W", nil, 74390.4},
+		{"P1WT5S", nil, 604805},
+		{"P1WT1H", nil, 608400},
+		{"P2YT1H30M5S", nil, 63119237},
+		{"FOOBAR", duration.ErrUnsupportedFormat, 0},
 		{"-P1Y", duration.ErrUnsupportedFormat, 0},
 	} {
 		d, err := duration.Parse(tt.dur)
@@ -33,7 +42,27 @@ func TestParse(t *testing.T) {
 		}
 
 		if got := d.Seconds(); got != tt.out {
-			t.Errorf("Parse(%q) -> d.Seconds() = %+v, want %+v", tt.dur, got, tt.out)
+			t.Errorf("Parse(%q) -> d.Seconds() = %f, want %f", tt.dur, got, tt.out)
+		}
+	}
+}
+
+func TestCompareWithTimeParseDuration(t *testing.T) {
+	for _, tt := range []struct {
+		timeStr     string
+		durationStr string
+	}{
+		{"1h", "PT1H"},
+		{"9m60s", "PT10.0M"},
+		{"1h2m", "PT1H2M"},
+		{"2h15s", "PT1H60M15S"},
+		{"169h", "P1WT1H"},
+	} {
+		td, _ := time.ParseDuration(tt.timeStr)
+		dd, _ := duration.Parse(tt.durationStr)
+
+		if td != dd {
+			t.Errorf(`not equal: %q->%v != %q->%v`, tt.timeStr, td, tt.durationStr, dd)
 		}
 	}
 }
