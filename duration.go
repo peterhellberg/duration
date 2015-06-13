@@ -37,7 +37,7 @@ import (
 	"time"
 )
 
-var (
+const (
 	// HoursPerDay is the number of hours per day according to Google
 	HoursPerDay = 24.0
 
@@ -49,11 +49,15 @@ var (
 
 	// HoursPerYear is the number of hours per year according to Google
 	HoursPerYear = 8765.81
+)
 
+var (
 	// ErrUnsupportedFormat is returned when parsing fails
 	ErrUnsupportedFormat = errors.New("unsupported string format")
 
 	pattern = regexp.MustCompile(`\AP((?P<years>[\d\.]+)Y)?((?P<months>[\d\.]+)M)?((?P<weeks>[\d\.]+)W)?((?P<days>[\d\.]+)D)?(T((?P<hours>[\d\.]+)H)?((?P<minutes>[\d\.]+)M)?((?P<seconds>[\d\.]+?)S)?)?\z`)
+
+	invalidStrings = []string{"", "P", "PT"}
 )
 
 // Parse a RFC3339 duration string into time.Duration
@@ -61,6 +65,10 @@ func Parse(s string) (time.Duration, error) {
 	d := time.Duration(0)
 
 	var match []string
+
+	if contains(invalidStrings, s) {
+		return d, ErrUnsupportedFormat
+	}
 
 	if pattern.MatchString(s) {
 		match = pattern.FindStringSubmatch(s)
@@ -77,31 +85,31 @@ func Parse(s string) (time.Duration, error) {
 		if f, err := strconv.ParseFloat(value, 64); err == nil {
 			switch name {
 			case "years":
-				if years, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerYear)); err == nil {
+				if years, err := duration("%fh", f*HoursPerYear); err == nil {
 					d += years
 				}
 			case "months":
-				if months, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerMonth)); err == nil {
+				if months, err := duration("%fh", f*HoursPerMonth); err == nil {
 					d += months
 				}
 			case "weeks":
-				if weeks, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerWeek)); err == nil {
+				if weeks, err := duration("%fh", f*HoursPerWeek); err == nil {
 					d += weeks
 				}
 			case "days":
-				if days, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerDay)); err == nil {
+				if days, err := duration("%fh", f*HoursPerDay); err == nil {
 					d += days
 				}
 			case "hours":
-				if hours, err := time.ParseDuration(fmt.Sprintf("%fh", f)); err == nil {
+				if hours, err := duration("%fh", f); err == nil {
 					d += hours
 				}
 			case "minutes":
-				if minutes, err := time.ParseDuration(fmt.Sprintf("%fm", f)); err == nil {
+				if minutes, err := duration("%fm", f); err == nil {
 					d += minutes
 				}
 			case "seconds":
-				if seconds, err := time.ParseDuration(fmt.Sprintf("%fs", f)); err == nil {
+				if seconds, err := duration("%fs", f); err == nil {
 					d += seconds
 				}
 			}
@@ -109,4 +117,18 @@ func Parse(s string) (time.Duration, error) {
 	}
 
 	return d, nil
+}
+
+func duration(format string, f float64) (time.Duration, error) {
+	return time.ParseDuration(fmt.Sprintf(format, f))
+}
+
+func contains(slice []string, item string) bool {
+	set := make(map[string]struct{}, len(slice))
+	for _, s := range slice {
+		set[s] = struct{}{}
+	}
+
+	_, ok := set[item]
+	return ok
 }

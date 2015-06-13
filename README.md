@@ -10,7 +10,7 @@ Parse a [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) duration string into `ti
 
 There are probably a few unsupported edge cases still to be fixed, please help me find them :)
 
-The following variables are used to do the calculations for longer durations:
+The following constants are used to do the calculations for longer durations:
 
 ```
 HoursPerDay = 24.0

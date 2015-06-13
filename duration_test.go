@@ -28,13 +28,32 @@ func TestParse(t *testing.T) {
 		{"P2DT1H10S", nil, 176410},
 		{"PT1004199059S", nil, 1004199059},
 		{"P3DT5H20M30.123S", nil, 278430.123},
-		{"P1W", nil, 604800}, // Shouldn’t be valid since string is missing T
+		{"P1W", nil, 604800},
 		{"P0.123W", nil, 74390.4},
 		{"P1WT5S", nil, 604805},
 		{"P1WT1H", nil, 608400},
 		{"P2YT1H30M5S", nil, 63119237},
-		{"FOOBAR", duration.ErrUnsupportedFormat, 0},
+		{"P1Y2M3DT5H20M30.123S", nil, 37094832.1218},
+		{"P1S", duration.ErrUnsupportedFormat, 0},
+		{"P-1Y", duration.ErrUnsupportedFormat, 0},
 		{"-P1Y", duration.ErrUnsupportedFormat, 0},
+		{"P1M2Y", duration.ErrUnsupportedFormat, 0},
+		{"P1Y-1M", duration.ErrUnsupportedFormat, 0},
+
+		// Shouldn’t be valid since empty string
+		{"", duration.ErrUnsupportedFormat, 0},
+
+		// Shouldn’t be valid since missing P
+		{"1Y", duration.ErrUnsupportedFormat, 0},
+
+		// Shouldn’t be valid since wrong format of string
+		{"FOOBAR", duration.ErrUnsupportedFormat, 0},
+
+		// Shouldn’t be valid since no time fields present
+		{"P", duration.ErrUnsupportedFormat, 0},
+
+		// Shouldn’t be valid since no time fields present
+		{"PT", duration.ErrUnsupportedFormat, 0},
 	} {
 		d, err := duration.Parse(tt.dur)
 		if err != tt.err {
