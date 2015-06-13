@@ -39,7 +39,7 @@ func TestParse(t *testing.T) {
 		{"-P1Y", duration.ErrUnsupportedFormat, 0},
 
 		// Not supported since fields in the wrong order
-		{"P1M2YT", duration.ErrUnsupportedFormat, 0},
+		{"P1M2Y", duration.ErrUnsupportedFormat, 0},
 
 		// Not supported since negative value
 		{"P-1Y", duration.ErrUnsupportedFormat, 0},
@@ -67,6 +67,9 @@ func TestParse(t *testing.T) {
 
 		// Invalid since no time fields present
 		{"PT", duration.ErrInvalidString, 0},
+
+		// Invalid since ending with T
+		{"P1Y2M3DT", duration.ErrInvalidString, 0},
 	} {
 		d, err := duration.Parse(tt.dur)
 		if err != tt.err {

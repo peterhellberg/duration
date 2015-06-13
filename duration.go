@@ -34,6 +34,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -69,7 +70,7 @@ func Parse(s string) (time.Duration, error) {
 
 	var match []string
 
-	if contains(invalidStrings, s) {
+	if contains(invalidStrings, s) || strings.HasSuffix(s, "T") {
 		return d, ErrInvalidString
 	}
 
