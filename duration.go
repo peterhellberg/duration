@@ -62,51 +62,48 @@ func Parse(s string) (time.Duration, error) {
 
 	var match []string
 
-	// Extract matches
 	if pattern.MatchString(s) {
 		match = pattern.FindStringSubmatch(s)
 	} else {
 		return d, ErrUnsupportedFormat
 	}
 
-	// Assign match values to Duration struct fields
 	for i, name := range pattern.SubexpNames() {
 		value := match[i]
 		if i == 0 || name == "" || value == "" {
 			continue
 		}
 
-		// Ignore error since we accept the zero value
-		f, _ := strconv.ParseFloat(value, 64)
-
-		switch name {
-		case "years":
-			if years, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerYear)); err == nil {
-				d += years
-			}
-		case "months":
-			if months, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerMonth)); err == nil {
-				d += months
-			}
-		case "weeks":
-			if weeks, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerWeek)); err == nil {
-				d += weeks
-			}
-		case "days":
-			if days, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerDay)); err == nil {
-				d += days
-			}
-		case "hours":
-			if hours, err := time.ParseDuration(fmt.Sprintf("%fh", f)); err == nil {
-				d += hours
-			}
-		case "minutes":
-			if minutes, err := time.ParseDuration(fmt.Sprintf("%fm", f)); err == nil {
-				d += minutes
-			}
-		case "seconds":
-			if seconds, err := time.ParseDuration(fmt.Sprintf("%fs", f)); err == nil {
-				d += seconds
+		if f, err := strconv.ParseFloat(value, 64); err == nil {
+			switch name {
+			case "years":
+				if years, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerYear)); err == nil {
+					d += years
+				}
+			case "months":
+				if months, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerMonth)); err == nil {
+					d += months
+				}
+			case "weeks":
+				if weeks, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerWeek)); err == nil {
+					d += weeks
+				}
+			case "days":
+				if days, err := time.ParseDuration(fmt.Sprintf("%fh", f*HoursPerDay)); err == nil {
+					d += days
+				}
+			case "hours":
+				if hours, err := time.ParseDuration(fmt.Sprintf("%fh", f)); err == nil {
+					d += hours
+				}
+			case "minutes":
+				if minutes, err := time.ParseDuration(fmt.Sprintf("%fm", f)); err == nil {
+					d += minutes
+				}
+			case "seconds":
+				if seconds, err := time.ParseDuration(fmt.Sprintf("%fs", f)); err == nil {
+					d += seconds
+				}
 			}
 		}
 	}
