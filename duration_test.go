@@ -40,20 +40,20 @@ func TestParse(t *testing.T) {
 		{"P1M2Y", duration.ErrUnsupportedFormat, 0},
 		{"P1Y-1M", duration.ErrUnsupportedFormat, 0},
 
-		// Shouldn’t be valid since empty string
-		{"", duration.ErrUnsupportedFormat, 0},
-
 		// Shouldn’t be valid since missing P
 		{"1Y", duration.ErrUnsupportedFormat, 0},
 
 		// Shouldn’t be valid since wrong format of string
 		{"FOOBAR", duration.ErrUnsupportedFormat, 0},
 
-		// Shouldn’t be valid since no time fields present
-		{"P", duration.ErrUnsupportedFormat, 0},
+		// Shouldn’t be valid since empty string
+		{"", duration.ErrInvalidString, 0},
 
 		// Shouldn’t be valid since no time fields present
-		{"PT", duration.ErrUnsupportedFormat, 0},
+		{"P", duration.ErrInvalidString, 0},
+
+		// Shouldn’t be valid since no time fields present
+		{"PT", duration.ErrInvalidString, 0},
 	} {
 		d, err := duration.Parse(tt.dur)
 		if err != tt.err {

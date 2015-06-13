@@ -52,8 +52,11 @@ const (
 )
 
 var (
+	// ErrInvalidString is returned when passed an invalid string
+	ErrInvalidString = errors.New("invalid duration string")
+
 	// ErrUnsupportedFormat is returned when parsing fails
-	ErrUnsupportedFormat = errors.New("unsupported string format")
+	ErrUnsupportedFormat = errors.New("unsupported duration string format")
 
 	pattern = regexp.MustCompile(`\AP((?P<years>[\d\.]+)Y)?((?P<months>[\d\.]+)M)?((?P<weeks>[\d\.]+)W)?((?P<days>[\d\.]+)D)?(T((?P<hours>[\d\.]+)H)?((?P<minutes>[\d\.]+)M)?((?P<seconds>[\d\.]+?)S)?)?\z`)
 
@@ -67,7 +70,7 @@ func Parse(s string) (time.Duration, error) {
 	var match []string
 
 	if contains(invalidStrings, s) {
-		return d, ErrUnsupportedFormat
+		return d, ErrInvalidString
 	}
 
 	if pattern.MatchString(s) {
