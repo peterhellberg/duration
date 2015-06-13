@@ -8,6 +8,17 @@
 
 Parse a [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) duration string into `time.Duration`
 
+There are probably a few unsupported edge cases still to be fixed, please help me find them :)
+
+The following variables are used to do the calculations for longer durations:
+
+```
+HoursPerDay = 24.0
+HoursPerWeek = 168.0
+HoursPerMonth = 730.4841667
+HoursPerYear = 8765.81
+```
+
 ## Installation
 
     go get -u github.com/peterhellberg/duration
@@ -32,16 +43,7 @@ func main() {
 }
 ```
 
-## Configuration
-
-```
-HoursPerDay = 24.0
-HoursPerWeek = 168.0
-HoursPerMonth = 730.4841667
-HoursPerYear = 8765.81
-```
-
-## Grammar for durations
+## RFC3339 grammar for durations
 
 ```
    dur-second        = 1*DIGIT "S"
