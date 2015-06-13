@@ -1,4 +1,4 @@
-***Warning: This package is not complete yet, use with caution***
+***Warning: This package is under development, use with caution***
 
 # duration
 
