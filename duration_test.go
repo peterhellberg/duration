@@ -53,6 +53,9 @@ func TestParse(t *testing.T) {
 		// Not supported since missing P
 		{"1Y", duration.ErrUnsupportedFormat, 0},
 
+		// Not supported since no value is specified for months
+		{"P1YM5D", duration.ErrUnsupportedFormat, 0},
+
 		// Not supported since wrong format of string
 		{"FOOBAR", duration.ErrUnsupportedFormat, 0},
 
