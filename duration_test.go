@@ -34,25 +34,35 @@ func TestParse(t *testing.T) {
 		{"P1WT1H", nil, 608400},
 		{"P2YT1H30M5S", nil, 63119237},
 		{"P1Y2M3DT5H20M30.123S", nil, 37094832.1218},
-		{"P1S", duration.ErrUnsupportedFormat, 0},
-		{"P-1Y", duration.ErrUnsupportedFormat, 0},
-		{"-P1Y", duration.ErrUnsupportedFormat, 0},
-		{"P1M2Y", duration.ErrUnsupportedFormat, 0},
-		{"P1Y-1M", duration.ErrUnsupportedFormat, 0},
 
-		// Shouldn’t be valid since missing P
+		// Not supported since negative period ()
+		{"-P1Y", duration.ErrUnsupportedFormat, 0},
+
+		// Not supported since fields in the wrong order
+		{"P1M2YT", duration.ErrUnsupportedFormat, 0},
+
+		// Not supported since negative value
+		{"P-1Y", duration.ErrUnsupportedFormat, 0},
+
+		// Not supported since negative value
+		{"P1YT-1M", duration.ErrUnsupportedFormat, 0},
+
+		// Not supported since missing T
+		{"P1S", duration.ErrUnsupportedFormat, 0},
+
+		// Not supported since missing P
 		{"1Y", duration.ErrUnsupportedFormat, 0},
 
-		// Shouldn’t be valid since wrong format of string
+		// Not supported since wrong format of string
 		{"FOOBAR", duration.ErrUnsupportedFormat, 0},
 
-		// Shouldn’t be valid since empty string
+		// Invalid since empty string
 		{"", duration.ErrInvalidString, 0},
 
-		// Shouldn’t be valid since no time fields present
+		// Invalid since no time fields present
 		{"P", duration.ErrInvalidString, 0},
 
-		// Shouldn’t be valid since no time fields present
+		// Invalid since no time fields present
 		{"PT", duration.ErrInvalidString, 0},
 	} {
 		d, err := duration.Parse(tt.dur)
