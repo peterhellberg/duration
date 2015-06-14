@@ -19,6 +19,8 @@ HoursPerMonth = 730.4841667
 HoursPerYear = 8765.81
 ```
 
+Look in the test for examples of both valid and invalid duration strings.
+
 ## Installation
 
     go get -u github.com/peterhellberg/duration
