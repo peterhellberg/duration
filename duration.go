@@ -59,7 +59,7 @@ var (
 	// ErrUnsupportedFormat is returned when parsing fails
 	ErrUnsupportedFormat = errors.New("unsupported duration string format")
 
-	pattern = regexp.MustCompile(`\AP((?P<years>[\d\.]+)Y)?((?P<months>[\d\.]+)M)?((?P<weeks>[\d\.]+)W)?((?P<days>[\d\.]+)D)?(T((?P<hours>[\d\.]+)H)?((?P<minutes>[\d\.]+)M)?((?P<seconds>[\d\.]+?)S)?)?\z`)
+	pattern = regexp.MustCompile(`\A(-)?P((?P<years>[\d\.]+)Y)?((?P<months>[\d\.]+)M)?((?P<weeks>[\d\.]+)W)?((?P<days>[\d\.]+)D)?(T((?P<hours>[\d\.]+)H)?((?P<minutes>[\d\.]+)M)?((?P<seconds>[\d\.]+?)S)?)?\z`)
 
 	invalidStrings = []string{"", "P", "PT"}
 )
@@ -68,16 +68,27 @@ var (
 func Parse(s string) (time.Duration, error) {
 	d := time.Duration(0)
 
-	var match []string
-
 	if contains(invalidStrings, s) || strings.HasSuffix(s, "T") {
 		return d, ErrInvalidString
 	}
+
+	var (
+		match  []string
+		prefix string
+	)
 
 	if pattern.MatchString(s) {
 		match = pattern.FindStringSubmatch(s)
 	} else {
 		return d, ErrUnsupportedFormat
+	}
+
+	if strings.HasPrefix(s, "-") {
+		prefix = "-"
+	}
+
+	duration := func(format string, f float64) (time.Duration, error) {
+		return time.ParseDuration(fmt.Sprintf(prefix+format, f))
 	}
 
 	for i, name := range pattern.SubexpNames() {
@@ -121,10 +132,6 @@ func Parse(s string) (time.Duration, error) {
 	}
 
 	return d, nil
-}
-
-func duration(format string, f float64) (time.Duration, error) {
-	return time.ParseDuration(fmt.Sprintf(format, f))
 }
 
 func contains(slice []string, item string) bool {

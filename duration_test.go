@@ -34,9 +34,11 @@ func TestParse(t *testing.T) {
 		{"P1WT1H", nil, 608400},
 		{"P2YT1H30M5S", nil, 63119237},
 		{"P1Y2M3DT5H20M30.123S", nil, 37094832.1218},
-
-		// Not supported since negative period
-		{"-P1Y", duration.ErrUnsupportedFormat, 0},
+		{"-P1Y2M3DT5H20M30.123S", nil, -37094832.1218},
+		{"-P1WT1H", nil, -608400},
+		{"-P1DT2S", nil, -86402},
+		{"-PT1M5S", nil, -65},
+		{"-P0.123W", nil, -74390.4},
 
 		// Not supported since fields in the wrong order
 		{"P1M2Y", duration.ErrUnsupportedFormat, 0},
