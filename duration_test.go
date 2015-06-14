@@ -16,7 +16,7 @@ func TestParse(t *testing.T) {
 	}{
 		{"PT1.5M", nil, 90},
 		{"PT0.5H", nil, 1800},
-		{"PT0.5H29M60S", nil, 3600}, // Shouldn’t be valid since only the last value can have fractions
+		{"PT0.5H29M60S", nil, 3600}, // Probably shouldn’t be valid since only the last value can have fractions
 		{"PT15S", nil, 15},
 		{"PT1M", nil, 60},
 		{"PT3M", nil, 180},
@@ -35,7 +35,7 @@ func TestParse(t *testing.T) {
 		{"P2YT1H30M5S", nil, 63119237},
 		{"P1Y2M3DT5H20M30.123S", nil, 37094832.1218},
 
-		// Not supported since negative period ()
+		// Not supported since negative period
 		{"-P1Y", duration.ErrUnsupportedFormat, 0},
 
 		// Not supported since fields in the wrong order
