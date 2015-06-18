@@ -1,5 +1,3 @@
-***Warning: This package is under development, use with caution***
-
 # duration
 
 [![Build Status](https://travis-ci.org/peterhellberg/duration.svg?branch=master)](https://travis-ci.org/peterhellberg/duration)
