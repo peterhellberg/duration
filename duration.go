@@ -66,10 +66,8 @@ var (
 
 // Parse a RFC3339 duration string into time.Duration
 func Parse(s string) (time.Duration, error) {
-	d := time.Duration(0)
-
 	if contains(invalidStrings, s) || strings.HasSuffix(s, "T") {
-		return d, ErrInvalidString
+		return 0, ErrInvalidString
 	}
 
 	var (
@@ -80,12 +78,18 @@ func Parse(s string) (time.Duration, error) {
 	if pattern.MatchString(s) {
 		match = pattern.FindStringSubmatch(s)
 	} else {
-		return d, ErrUnsupportedFormat
+		return 0, ErrUnsupportedFormat
 	}
 
 	if strings.HasPrefix(s, "-") {
 		prefix = "-"
 	}
+
+	return durationFromMatchAndPrefix(match, prefix)
+}
+
+func durationFromMatchAndPrefix(match []string, prefix string) (time.Duration, error) {
+	d := time.Duration(0)
 
 	duration := func(format string, f float64) (time.Duration, error) {
 		return time.ParseDuration(fmt.Sprintf(prefix+format, f))
