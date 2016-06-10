@@ -9,7 +9,7 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	for _, tt := range []struct {
+	for i, tt := range []struct {
 		dur string
 		err error
 		out float64
@@ -75,17 +75,17 @@ func TestParse(t *testing.T) {
 	} {
 		d, err := duration.Parse(tt.dur)
 		if err != tt.err {
-			t.Fatalf("unexpected error: %s", err)
+			t.Fatalf("[%d] unexpected error: %s", i, err)
 		}
 
 		if got := d.Seconds(); got != tt.out {
-			t.Errorf("Parse(%q) -> d.Seconds() = %f, want %f", tt.dur, got, tt.out)
+			t.Errorf("[%d] Parse(%q) -> d.Seconds() = %f, want %f", i, tt.dur, got, tt.out)
 		}
 	}
 }
 
 func TestCompareWithTimeParseDuration(t *testing.T) {
-	for _, tt := range []struct {
+	for i, tt := range []struct {
 		timeStr     string
 		durationStr string
 	}{
@@ -99,7 +99,7 @@ func TestCompareWithTimeParseDuration(t *testing.T) {
 		dd, _ := duration.Parse(tt.durationStr)
 
 		if td != dd {
-			t.Errorf(`not equal: %q->%v != %q->%v`, tt.timeStr, td, tt.durationStr, dd)
+			t.Errorf(`[%d] %not equal: %q->%v != %q->%v`, i, tt.timeStr, td, tt.durationStr, dd)
 		}
 	}
 }
