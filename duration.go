@@ -30,7 +30,6 @@ A small usage example
 package duration
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -54,10 +53,10 @@ const (
 
 var (
 	// ErrInvalidString is returned when passed an invalid string
-	ErrInvalidString = errors.New("invalid duration string")
+	ErrInvalidString = fmt.Errorf("invalid duration string")
 
 	// ErrUnsupportedFormat is returned when parsing fails
-	ErrUnsupportedFormat = errors.New("unsupported duration string format")
+	ErrUnsupportedFormat = fmt.Errorf("unsupported duration string format")
 
 	pattern = regexp.MustCompile(`\A(-)?P((?P<years>[\d\.]+)Y)?((?P<months>[\d\.]+)M)?((?P<weeks>[\d\.]+)W)?((?P<days>[\d\.]+)D)?(T((?P<hours>[\d\.]+)H)?((?P<minutes>[\d\.]+)M)?((?P<seconds>[\d\.]+?)S)?)?\z`)
 
