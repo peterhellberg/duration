@@ -1,6 +1,7 @@
 # duration
 
 [![Build Status](https://travis-ci.org/peterhellberg/duration.svg?branch=master)](https://travis-ci.org/peterhellberg/duration)
+[![Go Report Card](https://goreportcard.com/badge/peterhellberg/duration)](https://goreportcard.com/report/peterhellberg/duration)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/peterhellberg/duration)
 [![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/peterhellberg/duration/blob/master/LICENSE)
 
