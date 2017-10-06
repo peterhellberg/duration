@@ -99,7 +99,7 @@ func TestCompareWithTimeParseDuration(t *testing.T) {
 		dd, _ := duration.Parse(tt.durationStr)
 
 		if td != dd {
-			t.Errorf(`[%d] %not equal: %q->%v != %q->%v`, i, tt.timeStr, td, tt.durationStr, dd)
+			t.Errorf(`[%d] not equal: %q->%v != %q->%v`, i, tt.timeStr, td, tt.durationStr, dd)
 		}
 	}
 }
