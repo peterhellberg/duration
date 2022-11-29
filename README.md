@@ -1,6 +1,5 @@
 # :watch: duration
 
-[![Build Status](https://travis-ci.org/peterhellberg/duration.svg?branch=master)](https://travis-ci.org/peterhellberg/duration)
 [![Build status](https://github.com/peterhellberg/duration/actions/workflows/test.yml/badge.svg)](https://github.com/peterhellberg/duration/actions/workflows/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/peterhellberg/duration)](https://goreportcard.com/report/peterhellberg/duration)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://pkg.go.dev/github.com/peterhellberg/duration)
