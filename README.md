@@ -1,8 +1,9 @@
-# duration
+# :watch: duration
 
 [![Build Status](https://travis-ci.org/peterhellberg/duration.svg?branch=master)](https://travis-ci.org/peterhellberg/duration)
+[![Build status](https://github.com/peterhellberg/duration/actions/workflows/test.yml/badge.svg)](https://github.com/peterhellberg/duration/actions/workflows/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/peterhellberg/duration)](https://goreportcard.com/report/peterhellberg/duration)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/peterhellberg/duration)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://pkg.go.dev/github.com/peterhellberg/duration)
 [![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/peterhellberg/duration/blob/master/LICENSE)
 
 Parse a [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) duration string into `time.Duration`
