@@ -111,3 +111,34 @@ func ExampleParse() {
 
 	// Output: 2m5s
 }
+
+func TestParseNumericComponents(t *testing.T) {
+	for _, tt := range []struct {
+		dur string
+		err error
+		out time.Duration
+	}{
+		{"P.Y", duration.ErrUnsupportedFormat, 0},
+		{"P1..5M", duration.ErrUnsupportedFormat, 0},
+		{"P..W", duration.ErrUnsupportedFormat, 0},
+		{"P.5.5D", duration.ErrUnsupportedFormat, 0},
+		{"PT1..5H", duration.ErrUnsupportedFormat, 0},
+		{"PT..M", duration.ErrUnsupportedFormat, 0},
+		{"PT1..5S", duration.ErrUnsupportedFormat, 0},
+		{"P1Y..M", duration.ErrUnsupportedFormat, 0},
+		{"P..YT1S", duration.ErrUnsupportedFormat, 0},
+		{"-P1DT1..5S", duration.ErrUnsupportedFormat, 0},
+		{"PT.5S", nil, 500 * time.Millisecond},
+		{"PT1.S", nil, time.Second},
+		{"PT0.5H29M60S", nil, time.Hour},
+		{"P1WT0.5H", nil, 168*time.Hour + 30*time.Minute},
+		{"-P1WT0.5H", nil, -(168*time.Hour + 30*time.Minute)},
+	} {
+		t.Run(tt.dur, func(t *testing.T) {
+			d, err := duration.Parse(tt.dur)
+			if d != tt.out || err != tt.err {
+				t.Errorf("Parse(%q) = (%v, %v), want (%v, %v)", tt.dur, d, err, tt.out, tt.err)
+			}
+		})
+	}
+}
