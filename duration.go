@@ -125,6 +125,8 @@ func durationFromMatchAndPrefix(match []string, prefix string) (time.Duration, e
 			case "seconds":
 				d += duration("%fs", f)
 			}
+		} else {
+			return 0, ErrUnsupportedFormat
 		}
 	}
 
