@@ -142,3 +142,29 @@ func TestParseNumericComponents(t *testing.T) {
 		})
 	}
 }
+
+func TestParseOverflow(t *testing.T) {
+	for _, tt := range []struct {
+		dur string
+		err error
+		out time.Duration
+	}{
+		{"P300Y", duration.ErrUnsupportedFormat, 0},
+		{"-P300Y", duration.ErrUnsupportedFormat, 0},
+		{"PT3000000H", duration.ErrUnsupportedFormat, 0},
+		{"PT10000000000000000000000000000000000000000S", duration.ErrUnsupportedFormat, 0},
+		{"PT2000000H2000000H", duration.ErrUnsupportedFormat, 0},
+		{"P100YT2000000H", duration.ErrUnsupportedFormat, 0},
+		{"-P100YT2000000H", duration.ErrUnsupportedFormat, 0},
+		{"PT2562047H", nil, 2562047 * time.Hour},
+		{"-PT2562047H", nil, -2562047 * time.Hour},
+		{"P100Y", nil, 876581 * time.Hour},
+	} {
+		t.Run(tt.dur, func(t *testing.T) {
+			d, err := duration.Parse(tt.dur)
+			if d != tt.out || err != tt.err {
+				t.Errorf("Parse(%q) = (%v, %v), want (%v, %v)", tt.dur, d, err, tt.out, tt.err)
+			}
+		})
+	}
+}

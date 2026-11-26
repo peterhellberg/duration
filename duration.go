@@ -1,31 +1,29 @@
 /*
-
 Package duration parses RFC3339 duration strings into time.Duration
 
-Installation
+# Installation
 
 Just go get the package:
 
-    go get -u github.com/peterhellberg/duration
+	go get -u github.com/peterhellberg/duration
 
-Usage
+# Usage
 
 A small usage example
 
-		package main
+	package main
 
-		import (
-			"fmt"
+	import (
+		"fmt"
 
-			"github.com/peterhellberg/duration"
-		)
+		"github.com/peterhellberg/duration"
+	)
 
-		func main() {
-			if d, err := duration.Parse("P1DT30H4S"); err == nil {
-				fmt.Println(d) // Output: 54h0m4s
-			}
+	func main() {
+		if d, err := duration.Parse("P1DT30H4S"); err == nil {
+			fmt.Println(d) // Output: 54h0m4s
 		}
-
+	}
 */
 package duration
 
@@ -87,13 +85,14 @@ func Parse(s string) (time.Duration, error) {
 	return durationFromMatchAndPrefix(match, prefix)
 }
 
-func durationFunc(prefix string) func(string, float64) time.Duration {
-	return func(format string, f float64) time.Duration {
-		if d, err := time.ParseDuration(fmt.Sprintf(prefix+format, f)); err == nil {
-			return d
+func durationFunc(prefix string) func(string, float64) (time.Duration, error) {
+	return func(format string, f float64) (time.Duration, error) {
+		d, err := time.ParseDuration(fmt.Sprintf(prefix+format, f))
+		if err != nil {
+			return 0, ErrUnsupportedFormat
 		}
 
-		return time.Duration(0)
+		return d, nil
 	}
 }
 
@@ -108,26 +107,40 @@ func durationFromMatchAndPrefix(match []string, prefix string) (time.Duration, e
 			continue
 		}
 
-		if f, err := strconv.ParseFloat(value, 64); err == nil {
-			switch name {
-			case "years":
-				d += duration("%fh", f*HoursPerYear)
-			case "months":
-				d += duration("%fh", f*HoursPerMonth)
-			case "weeks":
-				d += duration("%fh", f*HoursPerWeek)
-			case "days":
-				d += duration("%fh", f*HoursPerDay)
-			case "hours":
-				d += duration("%fh", f)
-			case "minutes":
-				d += duration("%fm", f)
-			case "seconds":
-				d += duration("%fs", f)
-			}
-		} else {
+		f, err := strconv.ParseFloat(value, 64)
+		if err != nil {
 			return 0, ErrUnsupportedFormat
 		}
+
+		var c time.Duration
+
+		switch name {
+		case "years":
+			c, err = duration("%fh", f*HoursPerYear)
+		case "months":
+			c, err = duration("%fh", f*HoursPerMonth)
+		case "weeks":
+			c, err = duration("%fh", f*HoursPerWeek)
+		case "days":
+			c, err = duration("%fh", f*HoursPerDay)
+		case "hours":
+			c, err = duration("%fh", f)
+		case "minutes":
+			c, err = duration("%fm", f)
+		case "seconds":
+			c, err = duration("%fs", f)
+		}
+
+		if err != nil {
+			return 0, err
+		}
+
+		// All components share the same sign, so overflow flips the sign of the sum.
+		if sum := d + c; (c > 0 && sum < d) || (c < 0 && sum > d) {
+			return 0, ErrUnsupportedFormat
+		}
+
+		d += c
 	}
 
 	return d, nil
