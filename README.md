@@ -5,7 +5,18 @@
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://pkg.go.dev/github.com/peterhellberg/duration)
 [![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/peterhellberg/duration/blob/master/LICENSE)
 
-Parse a [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) duration string into `time.Duration`
+Parse an ISO 8601 duration string, as described in Appendix A of
+[RFC 3339](https://www.ietf.org/rfc/rfc3339.txt), into `time.Duration`
+
+In addition to the strict grammar below, the following are accepted:
+
+- fractions in any component, using `.` or `,` as the decimal separator
+- weeks combined with other components, such as `P1WT2H`
+- a leading `-` for negative durations
+
+Results are rounded to the nearest nanosecond, with halves rounded away
+from zero. Fractional digits after the 18th are ignored.
+Strings longer than 256 bytes are rejected.
 
 There are probably a few unsupported edge cases still to be fixed, please help me find them :)
 
@@ -22,7 +33,7 @@ Look in the test for examples of both valid and invalid duration strings.
 
 ## Installation
 
-    go get -u github.com/peterhellberg/duration
+    go get github.com/peterhellberg/duration@latest
 
 Feel free to copy this package into your own codebase.
 
